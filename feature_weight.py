@@ -9,16 +9,13 @@ Advacned Mahicne Learning term project
 Local Feature Weighted kNN 
 """
 
-import pandas as pd
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn import datasets
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
 class feature_weight :
-    def __init__(self) :
-        iris = datasets.load_iris()
-        self.data, self.target = pd.DataFrame(iris.data, columns=iris.feature_names), iris.target
+    def __init__(self, data, target) :
+        self.data, self.target = data, target
 
     def global_accuracy(self) :
         """
