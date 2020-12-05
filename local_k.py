@@ -13,8 +13,7 @@ import numpy as np
 import pandas as pd
 from sklearn import datasets
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+from sklearn.model_selection import cross_val_score
 import random
 from feature_weight import feature_weight
 import time
@@ -30,12 +29,9 @@ class Get_local_k :
         
         
     def global_acc(self) :
-        X_train, X_val, y_train, y_val = train_test_split(self.data, self.target)
-        
         for k in self.k_list :
-            knn = KNeighborsClassifier(n_neighbors=k)
-            knn.fit(X_train, y_train)
-            self.global_acc_ls.append(accuracy_score(knn.predict(X_val), y_val))
+            kfold = cross_val_score(KNeighborsClassifier(n_neighbors=k), self.data, self.target, cv=5).mean()
+            self.global_acc_ls.append(kfold)
             
             
     def weighted_l2(self, row0, row1) :
