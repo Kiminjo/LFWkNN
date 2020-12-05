@@ -24,7 +24,7 @@ class Get_local_k :
     def __init__(self) :
         iris = datasets.load_iris()
         self.data, self.target = pd.DataFrame(iris.data, columns=iris.feature_names), iris.target
-        self.k_list = [1,2,3,4,5]
+        self.k_list = [1,3,5,7,9,11]
         self.global_acc_ls = []
         self.local_k_df = []
         
@@ -61,7 +61,7 @@ class Get_local_k :
             for idx_1, value_1 in enumerate(mat_data) :
                 dist_matrix[idx_0, idx_1] = self.weighted_l2(value_0, value_1)
                 
-        for k in self.k_list :
+        for k_idx, k in enumerate(self.k_list) :
             acc_list = []
             
             # select k points with small weighted distance for each sample
@@ -80,9 +80,9 @@ class Get_local_k :
                 acc_list.append((self.target[idx_0]== [self.target[i] for i in sort_df]).mean())
             
             # combine local k accuracy and global k accuracy 
-            self.local_k_df.append(acc_list+self.global_acc_ls[k-1])
+            self.local_k_df.append(acc_list+self.global_acc_ls[k_idx])
             
-        self.local_k_df = pd.DataFrame(np.array(self.local_k_df).T, columns=['k=1', 'k=2', 'k=3', 'k=4', 'k=5'])
+        self.local_k_df = pd.DataFrame(np.array(self.local_k_df).T, columns=['k=1', 'k=3', 'k=5', 'k=7', 'k=9', 'k=11'])
         
         
     def get_train_k(self) :
@@ -104,7 +104,7 @@ class Get_local_k :
 
         for idx, row in train_local_k_df.iterrows() :
             row = list(row)
-            train_local_k_df.loc[idx, 'fitted_k'] = row.index(max(row))+1
+            train_local_k_df.loc[idx, 'fitted_k'] = self.k_list[row.index(max(row))]
             
         # Run up to 480seconds(almost 8 min) at this point
         return train_local_k_df
